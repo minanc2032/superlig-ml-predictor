@@ -29,6 +29,16 @@ Refresh match data:
 python scripts/download_data.py
 ```
 
+## Web frontend
+
+The Next.js site in [`web/`](web/) reads `web/public/data/predictions.json`. Regenerate it after retraining:
+
+```bash
+python scripts/export_predictions.py
+```
+
+A sample JSON is committed, so `cd web && npm i && npm run dev` works without Python. On Vercel, set the project **Root Directory to `web`**. See [`web/README.md`](web/README.md).
+
 ## 2025/26 squad assumptions
 
 From the 2024/25 file (`T1_2425.csv`):

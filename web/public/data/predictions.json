@@ -1,0 +1,139 @@
+{
+  "meta": {
+    "season": "2025/26",
+    "teams": 18,
+    "mae": 4.63,
+    "seasons_used": 7,
+    "trained_on": "2018/19-2024/25",
+    "algorithm": "Random Forest Classifier",
+    "generated_at": "2026-09-21T21:02:10+00:00"
+  },
+  "predictions": [
+    {
+      "predicted_rank": 1,
+      "team": "Galatasaray",
+      "expected_position": 2.51,
+      "logo_slug": "galatasaray",
+      "last_season_position": 1
+    },
+    {
+      "predicted_rank": 2,
+      "team": "Samsunspor",
+      "expected_position": 4.33,
+      "logo_slug": "samsunspor",
+      "last_season_position": 3
+    },
+    {
+      "predicted_rank": 3,
+      "team": "Besiktas",
+      "expected_position": 4.4,
+      "logo_slug": "besiktas",
+      "last_season_position": 4
+    },
+    {
+      "predicted_rank": 4,
+      "team": "Fenerbahce",
+      "expected_position": 4.55,
+      "logo_slug": "fenerbahce",
+      "last_season_position": 2
+    },
+    {
+      "predicted_rank": 5,
+      "team": "Eyupspor",
+      "expected_position": 6.69,
+      "logo_slug": "eyupspor",
+      "last_season_position": 6
+    },
+    {
+      "predicted_rank": 6,
+      "team": "Basaksehir",
+      "expected_position": 9.04,
+      "logo_slug": "basaksehir",
+      "last_season_position": 5
+    },
+    {
+      "predicted_rank": 7,
+      "team": "Trabzonspor",
+      "expected_position": 9.15,
+      "logo_slug": "trabzonspor",
+      "last_season_position": 7
+    },
+    {
+      "predicted_rank": 8,
+      "team": "Goztepe",
+      "expected_position": 11.01,
+      "logo_slug": "goztepe",
+      "last_season_position": 8
+    },
+    {
+      "predicted_rank": 9,
+      "team": "Konyaspor",
+      "expected_position": 11.43,
+      "logo_slug": "konyaspor",
+      "last_season_position": 11
+    },
+    {
+      "predicted_rank": 10,
+      "team": "Rizespor",
+      "expected_position": 11.48,
+      "logo_slug": "rizespor",
+      "last_season_position": 9
+    },
+    {
+      "predicted_rank": 11,
+      "team": "Gaziantep FK",
+      "expected_position": 11.68,
+      "logo_slug": "gaziantep",
+      "last_season_position": 12
+    },
+    {
+      "predicted_rank": 12,
+      "team": "Alanyaspor",
+      "expected_position": 12.1,
+      "logo_slug": "alanyaspor",
+      "last_season_position": 13
+    },
+    {
+      "predicted_rank": 13,
+      "team": "Genclerbirligi",
+      "expected_position": 12.42,
+      "logo_slug": "genclerbirligi",
+      "last_season_position": null
+    },
+    {
+      "predicted_rank": 14,
+      "team": "Kocaelispor",
+      "expected_position": 12.42,
+      "logo_slug": "kocaelispor",
+      "last_season_position": null
+    },
+    {
+      "predicted_rank": 15,
+      "team": "Karagumruk",
+      "expected_position": 12.42,
+      "logo_slug": "karagumruk",
+      "last_season_position": null
+    },
+    {
+      "predicted_rank": 16,
+      "team": "Kayserispor",
+      "expected_position": 12.52,
+      "logo_slug": "kayserispor",
+      "last_season_position": 14
+    },
+    {
+      "predicted_rank": 17,
+      "team": "Antalyaspor",
+      "expected_position": 12.67,
+      "logo_slug": "antalyaspor",
+      "last_season_position": 15
+    },
+    {
+      "predicted_rank": 18,
+      "team": "Kasimpasa",
+      "expected_position": 13.66,
+      "logo_slug": "kasimpasa",
+      "last_season_position": 10
+    }
+  ]
+}
