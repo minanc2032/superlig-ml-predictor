@@ -19,6 +19,7 @@ export default function ExplorePage() {
           </p>
           <Button
             render={<Link href="/predictions" />}
+            nativeButton={false}
             variant="outline"
             className="min-h-11 cursor-pointer"
           >

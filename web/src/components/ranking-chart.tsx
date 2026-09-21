@@ -52,6 +52,7 @@ export function RankingChart({ data }: Props) {
         <YAxis
           dataKey="club"
           type="category"
+          interval={0}
           width={110}
           tick={{ fontSize: 12, fontFamily: "var(--font-fira-sans)" }}
           stroke="var(--muted-foreground)"

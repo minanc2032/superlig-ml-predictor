@@ -1,196 +1,276 @@
 import Link from "next/link"
-import { ArrowRight, Database, Brain, Trophy, ShieldAlert } from "lucide-react"
+import {
+  ArrowRight,
+  Boxes,
+  Brain,
+  Database,
+  Globe,
+  ShieldAlert,
+  Terminal,
+  Trophy,
+  Triangle,
+} from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Separator } from "@/components/ui/separator"
-import { TeamChip } from "@/components/team-chip"
+import { CountUp } from "@/components/count-up"
+import { HeroMockup } from "@/components/hero-mockup"
 import { Reveal } from "@/components/reveal"
+import { StoryCompare } from "@/components/story-compare"
+import { TeamChip } from "@/components/team-chip"
+import { ZoneTabs } from "@/components/zone-tabs"
 import { predictions, modelMeta } from "@/lib/predictions"
 
-const steps = [
-  {
-    icon: Database,
-    title: "Load Data",
-    desc: "Historical Süper Lig match CSVs from football-data.co.uk — seasons 2018/19 through 2024/25.",
-  },
-  {
-    icon: Brain,
-    title: "Train",
-    desc: "A Random Forest Classifier maps season-n table stats to season-n+1 finishing positions.",
-  },
-  {
-    icon: Trophy,
-    title: "Predict",
-    desc: "Ranks 18 clubs by expected finishing position for the 2025/26 season.",
-  },
+const stack = [
+  { name: "Python", icon: Terminal },
+  { name: "scikit-learn", icon: Brain },
+  { name: "Next.js", icon: Globe },
+  { name: "Vercel", icon: Triangle },
 ]
 
-const stack = ["Python", "scikit-learn", "Next.js", "Vercel"]
-
-function ordinal(n: number): string {
-  const s = ["th", "st", "nd", "rd"]
-  const v = n % 100
-  return `${n}${s[(v - 20) % 10] ?? s[v] ?? s[0]}`
+function Eyebrow({ children, dark }: { children: React.ReactNode; dark?: boolean }) {
+  return (
+    <p className={`font-mono text-xs uppercase tracking-[0.18em] ${dark ? "text-amber-300" : "text-accent-text"}`}>
+      {children}
+    </p>
+  )
 }
 
 export default function Home() {
-  const top4 = predictions.slice(0, 4)
-  const story = predictions.slice(0, 3)
+  const top6 = predictions.slice(0, 6)
   const top5 = predictions.slice(0, 5)
+  // Story: the eight clubs the model puts highest, beside where they really finished last season.
+  const story = predictions.slice(0, 8)
+  const total = modelMeta.teams
+  const first = predictions[0]
+
+  const steps = [
+    {
+      n: "01",
+      icon: Database,
+      title: "Load the T1 data",
+      desc: `${modelMeta.seasonsUsed} seasons of Süper Lig results from football-data.co.uk, ${modelMeta.trainedOn}.`,
+      snippet: ["files    T1_*.csv", `seasons  ${modelMeta.seasonsUsed}`, "columns  HomeTeam AwayTeam FTHG FTAG"],
+    },
+    {
+      n: "02",
+      icon: Brain,
+      title: "Train: season n → n+1",
+      desc: "A Random Forest learns how a club's final table stats map to its finishing position the next season.",
+      snippet: ["X  season n table stats", "y  season n+1 position", "RandomForestClassifier(200 trees)"],
+    },
+    {
+      n: "03",
+      icon: Trophy,
+      title: `Predict ${modelMeta.season}`,
+      desc: `Every club gets an expected position; sorting them gives the ${total}-club table.`,
+      snippet: [
+        "predicted_rank  team  expected_position",
+        `${first.predictedRank}  ${first.team}  ${first.expectedPosition.toFixed(2)}`,
+      ],
+    },
+  ]
 
   return (
     <div className="flex flex-col">
       {/* Hero */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-primary to-[oklch(0.48_0.18_264)] py-24 px-4 text-center text-white">
-        <Reveal className="mx-auto max-w-2xl">
-          <p className="mb-3 font-mono text-sm tracking-widest text-blue-200 uppercase">
-            2025 / 26 Season · Forecast
+      <section className="relative overflow-x-clip bg-night pb-0 pt-16 text-night-foreground sm:pt-24">
+        <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                "radial-gradient(70% 55% at 50% 0%, oklch(0.5 0.19 262 / 0.45), transparent 70%), radial-gradient(40% 35% at 85% 30%, oklch(0.66 0.16 58 / 0.14), transparent 70%)",
+            }}
+          />
+          <div
+            className="absolute inset-0 opacity-[0.35]"
+            style={{
+              backgroundImage: "radial-gradient(oklch(1 0 0 / 0.09) 1px, transparent 1px)",
+              backgroundSize: "28px 28px",
+              maskImage: "radial-gradient(70% 60% at 50% 25%, black, transparent)",
+            }}
+          />
+        </div>
+
+        <div className="relative mx-auto max-w-6xl px-4 text-center sm:px-6">
+          <p
+            className="anim-fade-up mx-auto inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3.5 py-1.5 font-mono text-xs text-night-muted"
+            style={{ "--d": "0ms" } as React.CSSProperties}
+          >
+            <span className="h-1.5 w-1.5 rounded-full bg-accent" />
+            {modelMeta.season} season · Random Forest forecast
           </p>
-          <h1 className="text-4xl font-bold leading-tight tracking-tight sm:text-5xl">
-            The season,
-            <br />
-            <span className="text-amber-300">forecasted.</span>
+          <h1
+            className="anim-fade-up mx-auto mt-6 max-w-4xl text-5xl font-bold leading-[1.02] tracking-tight sm:text-7xl lg:text-8xl"
+            style={{ "--d": "90ms" } as React.CSSProperties}
+          >
+            The season, <span className="text-accent">forecasted.</span>
           </h1>
-          <p className="mt-5 text-lg text-blue-100 leading-relaxed max-w-lg mx-auto">
-            A Random Forest trained on {modelMeta.seasonsUsed} seasons of Süper Lig results predicts
-            the 2025/26 final table before a ball is kicked.
+          <p
+            className="anim-fade-up mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-night-muted sm:text-xl"
+            style={{ "--d": "180ms" } as React.CSSProperties}
+          >
+            Trained on {modelMeta.seasonsUsed} seasons of Süper Lig results. One model, one question: where does every club finish?
           </p>
-          <div className="mt-8">
+          <div
+            className="anim-fade-up mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row"
+            style={{ "--d": "270ms" } as React.CSSProperties}
+          >
             <Button
               render={<Link href="/predictions" />}
+              nativeButton={false}
               size="lg"
-              className="bg-amber-500 hover:bg-amber-400 text-black font-semibold cursor-pointer"
+              className="h-12 rounded-full bg-accent px-7 text-base font-semibold text-black hover:bg-amber-400"
             >
-              View predictions <ArrowRight className="ml-2 h-4 w-4" />
+              See the predictions <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
+            <a
+              href="#how-it-works"
+              className="inline-flex min-h-12 items-center rounded-full px-5 text-base font-medium text-night-muted transition-colors hover:text-white"
+            >
+              How it works
+            </a>
           </div>
-          <div className="mt-10 flex flex-wrap justify-center gap-x-6 gap-y-3">
-            {top4.map((team) => (
-              <TeamChip key={team.team} team={team} size="sm" showZoneBadge={false} />
-            ))}
-          </div>
-        </Reveal>
-        <div aria-hidden className="pointer-events-none absolute -bottom-16 left-1/2 -translate-x-1/2 h-48 w-96 rounded-full bg-blue-400/20 blur-3xl" />
-      </section>
+        </div>
 
-      {/* Story: top clubs with expected rank */}
-      <section className="mx-auto w-full max-w-5xl px-4 py-16 sm:px-6">
-        <h2 className="text-2xl font-bold text-foreground mb-2">Who the model likes</h2>
-        <p className="text-muted-foreground mb-8 text-sm">
-          The model&apos;s top three, with real last-season context
-        </p>
-        <div className="grid gap-4 sm:grid-cols-3">
-          {story.map((team) => (
-            <Card key={team.team}>
-              <CardContent className="pt-6">
-                <TeamChip team={team} size="lg" showZoneBadge />
-                <p className="text-xs text-muted-foreground font-mono mt-4">
-                  {team.lastSeasonPosition
-                    ? `Finished ${ordinal(team.lastSeasonPosition)} last season`
-                    : "Promoted club — uses relegated-club average features"}
-                </p>
-              </CardContent>
-            </Card>
-          ))}
+        <div className="relative mx-auto mt-14 max-w-6xl px-4 sm:mt-16 sm:px-6">
+          <div className="-mb-20 sm:-mb-28">
+            <HeroMockup rows={top6} totalTeams={total} season={modelMeta.season} mae={modelMeta.mae} />
+          </div>
         </div>
       </section>
 
-      <Separator />
+      {/* Story: last season vs forecast */}
+      <section className="mx-auto w-full max-w-6xl px-4 pb-20 pt-40 sm:px-6 sm:pt-52">
+        <div className="max-w-2xl">
+          <Eyebrow>The story</Eyebrow>
+          <h2 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">Last season, then the forecast.</h2>
+          <p className="mt-3 text-lg text-muted-foreground">
+            On the left, where these clubs really finished in the last season we have data for. On the right, where the model expects them next.
+          </p>
+        </div>
+        <Reveal trigger="inview" className="mt-10">
+          <StoryCompare rows={story} />
+        </Reveal>
+      </section>
+
+      {/* Tabs by zone */}
+      <section className="border-y border-border bg-muted/40">
+        <div className="mx-auto w-full max-w-6xl px-4 py-20 sm:px-6">
+          <div className="max-w-2xl">
+            <Eyebrow>Explore the table</Eyebrow>
+            <h2 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">Four zones, one forecast.</h2>
+            <p className="mt-3 text-lg text-muted-foreground">Switch tabs to see who lands where. Bar length shows the expected position.</p>
+          </div>
+          <div className="mt-8">
+            <ZoneTabs predictions={predictions} />
+          </div>
+        </div>
+      </section>
 
       {/* How it works */}
-      <section className="mx-auto w-full max-w-5xl px-4 py-16 sm:px-6">
-        <h2 className="text-center text-2xl font-bold text-foreground mb-2">How it works</h2>
-        <p className="text-center text-muted-foreground mb-10 text-sm">
-          Three steps from raw CSV to predicted table
-        </p>
-        <div className="grid gap-6 sm:grid-cols-3">
-          {steps.map(({ icon: Icon, title, desc }, i) => (
-            <Card key={title}>
-              <CardContent className="pt-6">
-                <div className="mb-4 flex items-center gap-3">
-                  <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-primary">
-                    <Icon className="h-5 w-5" />
-                  </span>
-                  <span className="font-mono text-xs text-muted-foreground">Step {i + 1}</span>
-                </div>
-                <h3 className="font-semibold text-foreground mb-1">{title}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">{desc}</p>
-              </CardContent>
-            </Card>
-          ))}
+      <section id="how-it-works" className="mx-auto w-full max-w-6xl scroll-mt-20 px-4 py-20 sm:px-6">
+        <div className="max-w-2xl">
+          <Eyebrow>How it works</Eyebrow>
+          <h2 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">Three steps from CSV to table.</h2>
         </div>
+        <Reveal trigger="inview" className="mt-10 grid gap-5 md:grid-cols-3">
+          {steps.map(({ n, icon: Icon, title, desc, snippet }) => (
+            <div key={n} className="flex flex-col rounded-2xl border border-border bg-card p-6">
+              <div className="flex items-center justify-between">
+                <span className="font-mono text-sm text-muted-foreground">{n}</span>
+                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-primary">
+                  <Icon className="h-4 w-4" />
+                </span>
+              </div>
+              <h3 className="mt-5 text-lg font-semibold">{title}</h3>
+              <p className="mt-2 flex-1 text-sm leading-relaxed text-muted-foreground">{desc}</p>
+              <pre className="mt-5 overflow-x-auto rounded-xl bg-night p-4 font-mono text-xs leading-relaxed text-night-foreground">
+                {snippet.join("\n")}
+              </pre>
+            </div>
+          ))}
+        </Reveal>
       </section>
 
       {/* Numbers strip */}
-      <section className="bg-muted/50 border-t border-b border-border">
-        <Reveal trigger="inview" className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
-          <div className="grid grid-cols-3 gap-6 text-center">
-            {[
-              { label: "Seasons used", value: modelMeta.seasonsUsed },
-              { label: "Clubs predicted", value: modelMeta.teams },
-              { label: "Held-out MAE (toy-model error)", value: `${modelMeta.mae} pos` },
-            ].map(({ label, value }) => (
-              <div key={label}>
-                <p className="font-mono text-xl font-bold text-primary">{value}</p>
-                <p className="text-xs text-muted-foreground mt-1 uppercase tracking-wide">{label}</p>
-              </div>
-            ))}
-          </div>
-        </Reveal>
+      <section className="bg-night text-night-foreground">
+        <div className="mx-auto grid max-w-6xl gap-10 px-4 py-16 text-center sm:grid-cols-3 sm:px-6">
+          {[
+            { label: "Seasons used", node: <CountUp value={modelMeta.seasonsUsed} />, note: modelMeta.trainedOn },
+            { label: "Clubs predicted", node: <CountUp value={total} />, note: `for ${modelMeta.season}` },
+            {
+              label: "Held-out MAE",
+              node: <CountUp value={modelMeta.mae} decimals={2} />,
+              note: "toy-model error: average places off",
+            },
+          ].map(({ label, node, note }) => (
+            <div key={label}>
+              <p className="font-mono text-6xl font-semibold tracking-tight text-accent sm:text-7xl">{node}</p>
+              <p className="mt-3 text-sm font-medium uppercase tracking-wider">{label}</p>
+              <p className="mt-1 font-mono text-xs text-night-muted">{note}</p>
+            </div>
+          ))}
+        </div>
       </section>
 
       {/* Table teaser */}
-      <section className="mx-auto w-full max-w-5xl px-4 py-16 sm:px-6">
-        <div className="flex items-center justify-between mb-6">
+      <section className="mx-auto w-full max-w-6xl px-4 py-20 sm:px-6">
+        <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
-            <h2 className="text-2xl font-bold text-foreground">Top 5</h2>
-            <p className="text-sm text-muted-foreground mt-1">Predicted 2025/26 finish</p>
+            <Eyebrow>Top of the table</Eyebrow>
+            <h2 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">The model&apos;s top five.</h2>
           </div>
-          <Button render={<Link href="/predictions" />} variant="outline" size="sm" className="cursor-pointer">
-            Open full predictions <ArrowRight className="ml-1 h-3 w-3" />
+          <Button
+            render={<Link href="/predictions" />}
+            nativeButton={false}
+            size="lg"
+            className="h-11 rounded-full px-6"
+          >
+            Open full predictions <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
         </div>
-        <div className="rounded-xl border border-border overflow-hidden">
+        <div className="mt-8 overflow-hidden rounded-2xl border border-border bg-card">
           {top5.map((team, i) => (
             <div
               key={team.team}
-              className={`px-4 py-3 transition-colors hover:bg-muted/60 ${i < top5.length - 1 ? "border-b border-border" : ""}`}
+              className={`px-5 py-3.5 transition-colors hover:bg-muted/60 ${i < top5.length - 1 ? "border-b border-border" : ""}`}
             >
-              <TeamChip team={team} size="md" showZoneBadge />
+              <TeamChip team={team} size="md" showZoneBadge totalTeams={total} />
             </div>
           ))}
         </div>
       </section>
 
-      {/* Honesty */}
-      <section className="mx-auto w-full max-w-3xl px-4 pb-16 sm:px-6">
-        <Card className="border-dashed">
-          <CardContent className="pt-6 flex gap-3">
-            <ShieldAlert className="h-5 w-5 text-muted-foreground shrink-0 mt-0.5" />
+      {/* Honesty + stack */}
+      <section className="border-t border-border">
+        <div className="mx-auto grid max-w-6xl gap-10 px-4 py-16 sm:px-6 lg:grid-cols-[1.4fr_1fr]">
+          <div className="flex gap-4 rounded-2xl border border-dashed border-border bg-card p-6">
+            <ShieldAlert className="mt-0.5 h-5 w-5 shrink-0 text-accent-text" />
             <div>
-              <p className="text-sm font-medium text-foreground">
-                Portfolio ML demo — not betting advice. No injuries, transfers, or xG.
-              </p>
-              <p className="text-xs text-muted-foreground mt-1">
-                Promoted clubs share the mean feature vector of the relegated sides they replace, since
-                they have no top-flight history to train on.
+              <p className="font-semibold">Portfolio ML demo — not betting advice. No injuries, transfers, or xG.</p>
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                Promoted clubs have no top-flight history, so they share the average of the relegated sides they replace and can tie on expected position.
               </p>
             </div>
-          </CardContent>
-        </Card>
-      </section>
-
-      {/* Stack callout */}
-      <section className="border-t border-border">
-        <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6 flex flex-wrap items-center justify-center gap-3">
-          {stack.map((s) => (
-            <span
-              key={s}
-              className="rounded-full border border-border bg-card px-4 py-1.5 text-xs font-mono text-muted-foreground"
-            >
-              {s}
-            </span>
-          ))}
+          </div>
+          <div>
+            <p className="font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground">Built with</p>
+            <div className="mt-4 flex flex-wrap gap-2.5">
+              {stack.map(({ name, icon: Icon }) => (
+                <span
+                  key={name}
+                  className="inline-flex min-h-11 items-center gap-2 rounded-full border border-border bg-card px-4 text-sm font-medium"
+                >
+                  <Icon className="h-4 w-4 text-muted-foreground" />
+                  {name}
+                </span>
+              ))}
+              <span className="inline-flex min-h-11 items-center gap-2 rounded-full border border-border bg-card px-4 text-sm font-medium">
+                <Boxes className="h-4 w-4 text-muted-foreground" />
+                Recharts
+              </span>
+            </div>
+          </div>
         </div>
       </section>
     </div>
